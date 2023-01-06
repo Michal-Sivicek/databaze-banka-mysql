@@ -149,6 +149,11 @@ INSERT INTO karta (cislo_karty, datum_vyprseni, CVC_kod, jmeno_uzivatele, debetn
 alter table ucet add column zustatek int;
 update ucet set zustatek = 321483842;
 
+
+alter table pujcka add column delka_pujcky int;
+update pujcka set delka_pujcky = 20;
+select * from pujcka;
+
 CREATE VIEW nesplacene_uvery AS
 SELECT zakaznik.jmeno, zakaznik.prijmeni, kontakt.email, kontakt.tel_cislo, pujcka.castka
 FROM zakaznik
@@ -221,6 +226,52 @@ select * from kontakt;
 select * from zakaznik;
 
 
+delimiter //
+CREATE PROCEDURE ziskani_pujcky(IN zakaznik_id INT, OUT pujcka_id INT, OUT castka_pujcky INT, OUT urok_z_pujcky INT)
+BEGIN
+  -- Get the loan information for the customer with the given ID
+  SELECT pujcka.id, pujcka.castka, pujcka.urok INTO pujcka_id, castka_pujcky, urok_z_pujcky
+  FROM zakaznik
+  INNER JOIN pujcka ON zakaznik.id = pujcka.zakaznik_id
+  WHERE zakaznik.id = zakaznik_id;
+END;
+
+-- Vypíše informace o půjčce
+CALL ziskani_pujcky(5, @pujcka_id, @castka_pujcky, @urok_z_pujcky);
+SELECT @pujcka_id, @castka_pujcky, @urok_z_pujcky;  
+
+
+delimiter //
+CREATE PROCEDURE zmena_udaju_zakaznika(IN zakaznik_id INT, IN jmeno VARCHAR(20), IN prijmeni VARCHAR(20), IN email VARCHAR(50), IN cislo INT)
+BEGIN
+  -- Update the customer's information
+  UPDATE zakaznik
+  SET jmeno = jmeno,
+      prijmeni = prijmeni
+  WHERE id = zakaznik_id;
+
+  -- Update the customer's contact information
+  UPDATE kontakt
+  SET email = email,
+      tel_cislo = cislo
+  WHERE id = (SELECT kontakt_id FROM zakaznik WHERE id = zakaznik_id);
+END;
+
+select * from zakaznik;
+select * from kontakt;
+CALL zmena_udaju_zakaznika(1, 'John', 'Doe', 'john.doe@example.com', 5551234567);
+
+
+delimiter //
+CREATE TRIGGER aktulizace_zustatku_na_uctu
+AFTER INSERT ON splatka
+FOR EACH ROW
+BEGIN
+  -- Update the balance of the associated account
+  UPDATE ucet
+  SET zustatek = zustatek - NEW.castka
+  WHERE id = (SELECT ucet_id FROM zakaznik WHERE id = (SELECT zakaznik_id FROM pujcka WHERE id = NEW.pujcka_id));
+END;
 
 
 
