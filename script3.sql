@@ -2,8 +2,10 @@ create database banka;
 use banka;
 
 SET @@SQL_SAFE_UPDATES = 0;
+select @@AUTOCOMMIT;
+set AUTOCOMMIT=0;
 
-
+begin;
 create table kontakt(
 id int primary key auto_increment not null,
 email varchar(50) not null,
@@ -90,89 +92,121 @@ constraint zakaznik_constraint2 foreign key (zakaznik_id) references zakaznik(id
 ucet_id int,
 constraint ucet_constraint foreign key (ucet_id) references ucet(id)
 );
+commit;
 
+begin;
+alter table ucet add column zustatek int;
+update ucet set zustatek = 321483842;
+commit;
+
+begin;
+alter table pujcka add column delka_pujcky int;
+update pujcka set delka_pujcky = 20;
+commit;
+
+select * from pujcka;
+
+begin;
+alter table pujcka add column pocet_splatek int;
+update pujcka set pocet_splatek = 40;
+commit;
+
+select * from pujcka;
+
+begin;
 INSERT INTO kontakt (email, tel_cislo) VALUES ('jan.novak@example.com', 12345678);
 INSERT INTO kontakt (email, tel_cislo) VALUES ('petr.svoboda@example.com', 23456789);
 INSERT INTO kontakt (email, tel_cislo) VALUES ('lucie.dvorakova@example.com', 34567890);
 INSERT INTO kontakt (email, tel_cislo) VALUES ('petr.mlady@example.com', 456789102);
 INSERT INTO kontakt (email, tel_cislo) VALUES ('jakub.bily@example.com', 567890123);
+commit;
 
+begin;
 INSERT INTO pobocka (nazev) VALUES ('Pobočka 1');
-INSERT INTO pobocka (nazev) VALUES ('Pobočka 1');
+INSERT INTO pobocka (nazev) VALUES ('Pobočka 2');
 INSERT INTO pobocka (nazev) VALUES ('Pobočka 3');
 INSERT INTO pobocka (nazev) VALUES ('Pobočka 4');
 INSERT INTO pobocka (nazev) VALUES ('Pobočka 5');
+commit;
 
+begin;
 INSERT INTO zakaznik (jmeno, prijmeni, kontakt_id) VALUES ('Jan', 'Novák', 1);
 INSERT INTO zakaznik (jmeno, prijmeni, kontakt_id) VALUES ('Petr', 'Svoboda', 1);
 INSERT INTO zakaznik (jmeno, prijmeni, kontakt_id) VALUES ('Lucie', 'Dvořáková', 1);
 INSERT INTO zakaznik (jmeno, prijmeni, kontakt_id) VALUES ('Petr', 'Mladý', 1);
 INSERT INTO zakaznik (jmeno, prijmeni, kontakt_id) VALUES ('Jakub', 'Bílý', 1);
+commit;
 
+begin;
 INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123456, 'CZ123456', 'CZBACZPP', 'CZK', 0, 1, 0, 1);
 INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123457, 'CZ123457', 'CZBACZPP', 'CZK', 1, 0, 0, 2);
 INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123458, 'CZ123458', 'CZBACZPP', 'CZK', 0, 0, 1, 3);
-INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123458, 'CZ123459', 'CZBACZPP', 'CZK', 0, 2, 1, 3);
-INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123458, 'CZ123450', 'CZBACZPP', 'CZK', 0, 4, 2, 3);
+INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123458, 'CZ123459', 'CZBACZPP', 'CZK', 0, 1, 1, 3);
+INSERT INTO ucet (cislo_uctu, IBAN, SWIFT, mena, plus_ucet, standartni_ucet, sporici_ucet, zakaznik_id) VALUES (123458, 'CZ123450', 'CZBACZPP', 'CZK', 0, 1, 1, 3);
+commit;
 
+begin;
 INSERT INTO lokace (ulice, mesto, stat, cislo_domu, PSC, pobocka_id) VALUES ('Ulica 1', 'Město 1', 'Stát 1', 1, 11111, 1);
 INSERT INTO lokace (ulice, mesto, stat, cislo_domu, PSC, pobocka_id) VALUES ('Ulica 2', 'Město 2', 'Stát 2', 2, 22222, 2);
 INSERT INTO lokace (ulice, mesto, stat, cislo_domu, PSC, pobocka_id) VALUES ('Ulica 3', 'Město 3', 'Stát 3', 3, 33333, 3);
 INSERT INTO lokace (ulice, mesto, stat, cislo_domu, PSC, pobocka_id) VALUES ('Ulica 4', 'Město 4', 'Stát 4', 4, 44444, 4);
 INSERT INTO lokace (ulice, mesto, stat, cislo_domu, PSC, pobocka_id) VALUES ('Ulica 5', 'Město 5', 'Stát 5', 5, 55555, 5);
+commit;
 
+begin;
 INSERT INTO zamestnanec (jmeno, prijmeni, pobocka_id, kontakt_id) VALUES ('Jana', 'Nováková', 1, 4);
 INSERT INTO zamestnanec (jmeno, prijmeni, pobocka_id, kontakt_id) VALUES ('Petra', 'Svobodová', 2, 5);
 INSERT INTO zamestnanec (jmeno, prijmeni, pobocka_id, kontakt_id) VALUES ('Lucie', 'Dvořákové', 2, 5);
 INSERT INTO zamestnanec (jmeno, prijmeni, pobocka_id, kontakt_id) VALUES ('Petr', 'Mladý', 2, 5);
 INSERT INTO zamestnanec (jmeno, prijmeni, pobocka_id, kontakt_id) VALUES ('Jakub', 'Bílý', 2, 5);
+commit;
 
+begin;
 INSERT INTO pujcka (datum_zalozeni, castka, urok, zakaznik_id) VALUES ('2022-01-01', 10000, 5, 1);
 INSERT INTO pujcka (datum_zalozeni, castka, urok, zakaznik_id) VALUES ('2022-01-01', 20000, 10, 2);
 INSERT INTO pujcka (datum_zalozeni, castka, urok, zakaznik_id) VALUES ('2022-01-01', 30000, 15, 3);
 INSERT INTO pujcka (datum_zalozeni, castka, urok, zakaznik_id) VALUES ('2022-01-01', 40000, 20, 4);
 INSERT INTO pujcka (datum_zalozeni, castka, urok, zakaznik_id) VALUES ('2022-01-01', 50000, 25, 5);
+commit;
 
+begin;
 INSERT INTO splatka (datum_splatky, castka, pujcka_id) VALUES ('2022-01-01', 1000, 2);
 INSERT INTO splatka (datum_splatky, castka, pujcka_id) VALUES ('2022-02-01', 1000, 2);
 INSERT INTO splatka (datum_splatky, castka, pujcka_id) VALUES ('2022-03-01', 1000, 2);
 INSERT INTO splatka (datum_splatky, castka, pujcka_id) VALUES ('2022-04-01', 1000, 2);
 INSERT INTO splatka (datum_splatky, castka, pujcka_id) VALUES ('2022-05-01', 1000, 2);
-  
+commit;
+
+begin;  
 INSERT INTO karta (cislo_karty, datum_vyprseni, CVC_kod, jmeno_uzivatele, debetni_karta, kreditni_karta, bezkontaktni, online_karta, zakaznik_id, ucet_id) VALUES (123456, '2022-12-01', 123, 'Jan Novak', 1, 0, 1, 0, 1, 1);
 INSERT INTO karta (cislo_karty, datum_vyprseni, CVC_kod, jmeno_uzivatele, debetni_karta, kreditni_karta, bezkontaktni, online_karta, zakaznik_id, ucet_id) VALUES (123457, '2023-01-01', 123, 'Petr Novak', 0, 1, 0, 1, 2, 2);
 INSERT INTO karta (cislo_karty, datum_vyprseni, CVC_kod, jmeno_uzivatele, debetni_karta, kreditni_karta, bezkontaktni, online_karta, zakaznik_id, ucet_id) VALUES (123458, '2023-02-01', 123, 'Jana Novakova', 0, 1, 1, 0, 3, 3);
 INSERT INTO karta (cislo_karty, datum_vyprseni, CVC_kod, jmeno_uzivatele, debetni_karta, kreditni_karta, bezkontaktni, online_karta, zakaznik_id, ucet_id) VALUES (123459, '2023-03-01', 123, 'Jiri Novak', 0, 0, 0, 1, 4, 4);
 INSERT INTO karta (cislo_karty, datum_vyprseni, CVC_kod, jmeno_uzivatele, debetni_karta, kreditni_karta, bezkontaktni, online_karta, zakaznik_id, ucet_id) VALUES (123460, '2023-04-01', 123, 'Lenka Novakova', 1, 1, 1, 1, 5, 5);
+commit;
 
-
-alter table ucet add column zustatek int;
-update ucet set zustatek = 321483842;
-
-
-alter table pujcka add column delka_pujcky int;
-update pujcka set delka_pujcky = 20;
-select * from pujcka;
-
+begin;
 CREATE VIEW nesplacene_uvery AS
 SELECT zakaznik.jmeno, zakaznik.prijmeni, kontakt.email, kontakt.tel_cislo, pujcka.castka
 FROM zakaznik
 INNER JOIN kontakt ON zakaznik.kontakt_id = kontakt.id
 INNER JOIN pujcka ON zakaznik.id = pujcka.zakaznik_id;
-
+commit;
 
 select * from nesplacene_uvery;
 
-
+begin;
 CREATE VIEW ucty_s_vysokym_zustatkem AS
 SELECT zakaznik.jmeno, zakaznik.prijmeni, kontakt.email, kontakt.tel_cislo, ucet.zustatek
 FROM zakaznik
 INNER JOIN ucet ON zakaznik.id = ucet.zakaznik_id
 INNER JOIN kontakt ON zakaznik.kontakt_id = kontakt.id
 WHERE ucet.zustatek > 10000;
+commit;
 
 select * from ucty_s_vysokym_zustatkem;
 
+begin;
 CREATE VIEW uzivatel_s_aktivni_pucjkou AS
 SELECT zakaznik.jmeno, zakaznik.prijmeni, kontakt.email, kontakt.tel_cislo,pujcka.castka
 FROM zakaznik
@@ -181,15 +215,18 @@ INNER JOIN pujcka ON zakaznik.id = pujcka.zakaznik_id
 WHERE NOT EXISTS (
     SELECT * FROM splatka WHERE splatka.pujcka_id = pujcka.id
 );
+commit;
 
 select * from uzivatel_s_aktivni_pucjkou;
 
+begin;
 CREATE VIEW standartni_ucty_v_meste4 AS
-SELECT zakaznik.jmeno, zakaznik.prijmeni, ucet.cislo_uctu, ucet.saldo
+SELECT zakaznik.jmeno, zakaznik.prijmeni, ucet.cislo_uctu
 FROM zakaznik
 INNER JOIN ucet ON zakaznik.id = ucet.zakaznik_id
 INNER JOIN lokace ON zakaznik.id = lokace.zakaznik_id
 WHERE ucet.standartni_ucet = 1 AND lokace.mesto = 'Město 4';
+commit;
 
 select * from standartni_ucty_v_meste4;
 
@@ -197,19 +234,20 @@ select * from standartni_ucty_v_meste4;
 
 -- Tento pohled vytvoří virtuální tabulku s názvem aktivni_ucty, která bude obsahovat čísla účtů, jména a příjmení zákazníků a zůstatky 
 -- na účtech. Pohled bude vybrat data z tabulky ucet a zakaznik a zobrazí pouze účty, které jsou označeny jako "plus účty" a mají zůstatek vyšší než 0.
-
+begin;
 CREATE VIEW aktivni_ucty AS
 SELECT ucet.cislo_uctu, zakaznik.jmeno, zakaznik.prijmeni, ucet.zustatek
 FROM ucet
 JOIN zakaznik ON ucet.zakaznik_id = zakaznik.id
 WHERE ucet.plus_ucet = TRUE AND ucet.zustatek > 0;
+commit;
 
 select * from aktivni_ucty;
 
 
 -- Tato procedura se nazývá vytvor_zakaznika a přijímá čtyři parametry: jmeno, prijmeni, email, a tel_cislo. 
 -- Tato procedura vytvoří nového zákazníka s danými údaji a vytvoří pro něj také nový záznam v tabulce kontakt.
-
+begin;
 delimiter //
 CREATE PROCEDURE vytvor_zakaznika(IN jmeno VARCHAR(20), IN prijmeni VARCHAR(20), IN email VARCHAR(50), IN tel_cislo INT)
 BEGIN
@@ -219,13 +257,14 @@ BEGIN
   SET kontakt_id = LAST_INSERT_ID();
   INSERT INTO zakaznik (jmeno, prijmeni, kontakt_id) VALUES (jmeno, prijmeni, kontakt_id);
 END;
+commit;
 
 CALL vytvor_zakaznika('Jan', 'Novák', 'jan.novak@email.cz', 777777777);
 
 select * from kontakt;
 select * from zakaznik;
 
-
+begin;
 delimiter //
 CREATE PROCEDURE ziskani_pujcky(IN zakaznik_id INT, OUT pujcka_id INT, OUT castka_pujcky INT, OUT urok_z_pujcky INT)
 BEGIN
@@ -235,12 +274,13 @@ BEGIN
   INNER JOIN pujcka ON zakaznik.id = pujcka.zakaznik_id
   WHERE zakaznik.id = zakaznik_id;
 END;
+commit;
 
 -- Vypíše informace o půjčce
 CALL ziskani_pujcky(5, @pujcka_id, @castka_pujcky, @urok_z_pujcky);
 SELECT @pujcka_id, @castka_pujcky, @urok_z_pujcky;  
 
-
+begin;
 delimiter //
 CREATE PROCEDURE zmena_udaju_zakaznika(IN zakaznik_id INT, IN jmeno VARCHAR(20), IN prijmeni VARCHAR(20), IN email VARCHAR(50), IN cislo INT)
 BEGIN
@@ -256,12 +296,14 @@ BEGIN
       tel_cislo = cislo
   WHERE id = (SELECT kontakt_id FROM zakaznik WHERE id = zakaznik_id);
 END;
+commit;
+
 
 select * from zakaznik;
 select * from kontakt;
 CALL zmena_udaju_zakaznika(1, 'John', 'Doe', 'john.doe@example.com', 5551234567);
 
-
+begin;
 delimiter //
 CREATE TRIGGER aktulizace_zustatku_na_uctu
 AFTER INSERT ON splatka
@@ -272,6 +314,41 @@ BEGIN
   SET zustatek = zustatek - NEW.castka
   WHERE id = (SELECT ucet_id FROM zakaznik WHERE id = (SELECT zakaznik_id FROM pujcka WHERE id = NEW.pujcka_id));
 END;
+commit;
+
+begin;
+delimiter //
+CREATE TRIGGER zabraneni_vice_sporicim_uctum
+BEFORE INSERT ON ucet
+FOR EACH ROW
+BEGIN
+  IF NEW.sporici_ucet = 1 THEN
+    IF (SELECT COUNT(*) FROM ucet WHERE zakaznik_id = NEW.zakaznik_id AND sporici_ucet = 1) > 0 THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Zákazník může mít pouze jeden spořicí účet';
+    END IF;
+  END IF;
+END;
+commit;
+
+
+begin;
+create index pobocka_index on pobocka(nazev);
+create index zakaznik_index on zakaznik(jmeno,prijmeni);
+create index zamestnanec_index on zamestnanec(jmeno,prijmeni);
+commit;
+
+begin;
+create user "uzivatel"@"%" identified by "uzivatel123";
+GRANT SELECT on banka.* to "uzivatel"@"%";
+commit;
+begin;
+create user "administrator"@"%" identified by "administrator123";
+GRANT all privileges on banka.* to "administrator"@"%";
+commit;
+begin;
+create user "zamestnanec"@"%" identified by "zamestnanec123";
+GRANT SELECT,INSERT,UPDATE on banka.* to "zamestnanec"@"%";
+commit;
 
 
 
