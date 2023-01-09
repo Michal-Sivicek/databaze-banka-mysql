@@ -1,0 +1,14 @@
+přihlašovací údaje pro následující uživatelé: 
+
+jmeno: uzivatel
+heslo: uzivatel123
+
+__________________________
+
+jmeno: administrator
+heslo:administrator123
+
+__________________________
+
+jmeno: zamestnanec
+heslo: zamestnanec123
